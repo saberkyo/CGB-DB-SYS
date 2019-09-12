@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.cy.pj.sys.dao.SysUserDao">
+ 
+ 	<resultMap type="com.cy.pj.common.vo.SysUserDeptVo" id="sysUserMap">
+ 		<id property="id" column="id"/>
+ 		<result property="username" column="username"/>
+ 		<result property="password" column="password"/>
+ 		<result property="salt" column="salt"/>
+ 		<result property="email" column="email"/>
+ 		<result property="mobile" column="mobile"/>
+ 		<result property="valid" column="valid"/>
+ 		<result property="createdTime" column="createdTime"/>
+ 		<result property="modifiedTime" column="modifiedTime"/>
+ 		<result property="createdUser" column="createdUser"/>
+ 		<result property="modifiedUser" column="modifiedUser"/>
+ 		<!-- 一般应用于many2one或one2one查询  -->
+ 		<association property="sysDept" column="deptId" select="com.cy.pj.sys.dao.SysDeptDao.findById"></association>
+ 	</resultMap>
+ 	
+ 	<sql id="queryWhereId">
+ 		<where>
+ 			<if test="username!=null and username!=''">
+ 				username like concat("%",#{username},"%")
+ 			</if>
+ 		</where>
+ 	</sql>
+ 	
+ 	<select id="findPageObjects" resultMap="sysUserMap">
+ 		select * from  sys_users
+ 		<include refid="queryWhereId"/>
+ 		order by createdTime desc
+ 		limit #{startIndex},#{pageSize}
+ 	</select>
+ 	
+ 	<select id="getRowCount" resultType="int">
+ 		select count(*) from sys_users
+ 		<include refid="queryWhereId"/>
+ 	</select>
+ 	
+ 	<update id="validById">
+ 		update sys_users set valid=#{valid},modifiedUser=#{modifiedUser},modifiedTime=now()
+ 		where id=#{id}
+ 	</update>
+ 	
+ 	<insert id="insertObject" useGeneratedKeys="true" keyProperty="id">
+ 		insert into sys_users(username,password,salt,email,mobile,valid,deptId,createdTime,modifiedTime,createdUser,modifiedUser)
+ 		values(#{username},#{password},#{salt},#{email},#{mobile},#{valid},#{deptId},now(),now(),#{createdUser},#{modifiedUser})
+ 	</insert>
+ 	
+ 	<select id="findObjectById" resultMap="sysUserMap">
+ 		select * from sys_users where id=#{id}
+ 	</select>
+ 	
+ 	<update id="updateObject">
+ 		update sys_users
+ 		<set>
+ 			<if test="username!=null and username!=''">username=#{username},</if>
+ 			<if test="email!=null and email!=''">email=#{email},</if>
+ 			<if test="mobile!=null and mobile!=''">mobile=#{mobile},</if>
+ 			<if test="deptId!=null and deptId!=''">deptId=#{deptId},</if>
+ 			<if test="modifiedUser!=null and modifiedUser!=''">modifiedUser=#{modifiedUser},</if>
+ 			modifiedTime=now()
+ 		</set>
+ 		where id=#{id}
+ 	</update>
+ 	
+ 	<update id="updatePassword">
+ 		update sys_users set password=#{password},salt=#{salt},modifiedTime=now()
+ 		where id=#{id}	
+ 	</update>
+ 	
+ </mapper>

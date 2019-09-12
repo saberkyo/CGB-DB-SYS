@@ -1,0 +1,30 @@
+#server
+server:
+  port: 80
+  tomcat:
+    max-threads: 1000
+    
+#spring 176.129.6.228
+spring:
+  datasource:
+    url: jdbc:mysql:///jtsys?serverTimezone=GMT%2B8&characterEncoding=utf8
+    username: root
+    password: root
+  thymeleaf:
+    prefix: classpath:/templates/pages/
+    suffix: .html
+    
+#mybatis
+mybatis:
+  type-aliases-package: com.cy.pj.sys.entity;com.cy.pj.common.vo
+  configuration:
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+  mapper-locations:
+  - classpath:/mapper/sys/*.xml
+
+#log
+logging:
+  level:
+      com.cy: DEBUG
+      

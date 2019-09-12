@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.pj.sys.dao.SysMenuDao">
+
+	<select id="findObjects" resultType="map">
+		select k.*,p.name parentName
+		from sys_menus k left join sys_menus p
+		on k.parentId=p.id
+	</select>
+
+	<select id="getChildCount" resultType="int">
+		select count(*) from sys_menus
+		where parentId=#{id}
+	</select>
+
+	<delete id="deleteObject">
+		delete from sys_menus where id=#{id}
+	</delete>
+
+	<select id="findZtreeMenuNodes"
+		resultType="com.cy.pj.common.vo.Node">
+		select id,name,parentId from sys_menus
+	</select>
+
+	<insert id="insertObject">
+		insert into
+		sys_menus(name,url,type,sort,note,parentId,permission,createdTime,modifiedTime,createdUser,modifiedUser)
+		values(#{name},#{url},#{type},#{sort},#{note},#{parentId},#{permission},now(),now(),#{createdUser},#{modifiedUser})
+	</insert>
+	
+	<update id="updateObject">
+		update sys_menus
+		<set>
+			<if test="name!=null">name=#{name},</if>
+			<if test="url!=null">url=#{url},</if>
+			<if test="type!=null">type=#{type},</if>
+			<if test="sort!=null">sort=#{sort},</if>
+			<if test="note!=null">note=#{note},</if>
+			<if test="parentId!=null">parentId=#{parentId},</if>
+			<if test="permission!=null">permission=#{permission},</if>
+			<if test="modifiedUser!=null">modifiedUser=#{modifiedUser},</if>
+			modifiedTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+</mapper>
